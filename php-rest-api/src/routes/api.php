@@ -15,10 +15,6 @@ Route::prefix('tax')->group(function () {
     Route::post('/refund', [UserController::class, 'processTaxRefund']);
 });
 
-require_once __DIR__ . '/../controllers/UserController.php';
-
-use App\Controllers\UserController;
-
 $controller = new UserController();
 
 $requestMethod = $_SERVER['REQUEST_METHOD'];
