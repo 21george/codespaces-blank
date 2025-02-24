@@ -2,12 +2,38 @@
 
 namespace App\Services;
 
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
 class EmailService
 {
     public function sendVerificationEmail($email, $verificationCode)
     {
-        // Here you would normally use a mailer library to send the email
-        // For simplicity, we are just printing the verification code
-        echo "Verification email sent to $email with code: $verificationCode";
+        $mail = new PHPMailer(true);
+
+        try {
+            // Server settings
+            $mail->isSMTP();
+            $mail->Host = 'smtp.example.com'; // Set the SMTP server to send through
+            $mail->SMTPAuth = true;
+            $mail->Username = 'your_email@example.com'; // SMTP username
+            $mail->Password = 'your_password'; // SMTP password
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port = 587;
+
+            // Recipients
+            $mail->setFrom('your_email@example.com', 'Mailer');
+            $mail->addAddress($email);
+
+            // Content
+            $mail->isHTML(true);
+            $mail->Subject = 'Email Verification';
+            $mail->Body = "Your verification code is: $verificationCode";
+
+            $mail->send();
+            echo "Verification email sent to $email with code: $verificationCode";
+        } catch (Exception $e) {
+            echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+        }
     }
 }
