@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use \Exception;
+
 class User
 {
     private $id;
@@ -9,6 +11,7 @@ class User
     private $income;
     private $country;
     private $userType;
+    private $password;
 
     public function __construct($name, $income, $country, $userType)
     {
@@ -64,7 +67,18 @@ class User
         $this->userType = $userType;
     }
 
-    public function validate() {
+    public function getPassword()
+    {
+        return $this->password;
+    }
+
+    public function setPassword($password)
+    {
+        $this->password = password_hash($password, PASSWORD_BCRYPT);
+    }
+
+    public function validate()
+    {
         if (empty($this->name) || empty($this->country)) {
             throw new Exception("Name and country cannot be empty.");
         }

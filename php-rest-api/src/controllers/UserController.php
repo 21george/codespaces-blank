@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Models\User;
 use App\Services\TaxService;
+use \Exception;
 
 class UserController
 {
