@@ -4,16 +4,19 @@ namespace App\Controllers;
 
 use App\Models\User;
 use App\Services\TaxService;
+use App\Services\EmailService;
 use \Exception;
 
 class UserController
 {
     private $users = [];
     private $taxService;
+    private $emailService;
 
     public function __construct()
     {
         $this->taxService = new TaxService();
+        $this->emailService = new EmailService();
     }
 
     public function createUser($data)
@@ -118,5 +121,33 @@ class UserController
             'Tax Identification Number',
             'Financial Statements'
         ];
+    }
+
+    public function initiate2FA($userId)
+    {
+        $user = $this->readUser($userId);
+        if (!$user) {
+            throw new Exception("User not found");
+        }
+
+        $otp = rand(100000, 999999); // Generate a 6-digit OTP
+        $this->emailService->sendOTP($user->getEmail(), $otp);
+
+        // Save OTP to session or database
+        $_SESSION['otp'] = $otp;
+        $_SESSION['otp_user_id'] = $userId;
+
+        return ['status' => 'success', 'message' => 'OTP sent to email'];
+    }
+
+    public function verify2FA($userId, $otp)
+    {
+        if ($_SESSION['otp_user_id'] == $userId && $_SESSION['otp'] == $otp) {
+            unset($_SESSION['otp']);
+            unset($_SESSION['otp_user_id']);
+            return ['status' => 'success', 'message' => '2FA verification successful'];
+        }
+
+        return ['status' => 'error', 'message' => 'Invalid OTP'];
     }
 }

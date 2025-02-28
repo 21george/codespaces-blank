@@ -12,14 +12,16 @@ class User
     private $country;
     private $userType;
     private $password;
+    private $email;
 
-    public function __construct($name, $income, $country, $userType)
+    public function __construct($name, $income, $country, $userType, $email)
     {
         $this->id = uniqid();
         $this->name = $name;
         $this->income = $income;
         $this->country = $country;
         $this->userType = $userType;
+        $this->email = $email;
     }
 
     public function getId()
@@ -75,6 +77,16 @@ class User
     public function setPassword($password)
     {
         $this->password = password_hash($password, PASSWORD_BCRYPT);
+    }
+
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    public function setEmail($email)
+    {
+        $this->email = $email;
     }
 
     public function validate()
